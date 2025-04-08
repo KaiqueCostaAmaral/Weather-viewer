@@ -7,10 +7,44 @@ const apiKey = "fbf43cfebb91260fbb8201a8bb770fef";
 
 form.addEventListener("submit", e => {
   e.preventDefault();
-  const listItems = list.querySelectorAll(".ajax-section .city");
-  const inputVal = input.value;
+  let inputVal = input.value;
 
-//ajax inicio
+
+  const listItems = list.querySelectorAll(".ajax-section .city");
+  const listItemsArray = Array.from(listItems);
+
+  if (listItemsArray.length > 0) {
+    const filteredArray = listItemsArray.filter(el => {
+      let content = "";
+      
+      if (inputVal.includes(",")) {
+        
+        if (inputVal.split(",")[1].length > 2) {
+          inputVal = inputVal.split(",")[0];
+          content = el
+            .querySelector(".city-name span")
+            .textContent.toLowerCase();
+        } else {
+          content = el.querySelector(".city-name").dataset.name.toLowerCase();
+        }
+      } else {
+        
+        content = el.querySelector(".city-name span").textContent.toLowerCase();
+      }
+      return content == inputVal.toLowerCase();
+    });
+
+    if (filteredArray.length > 0) {
+      msg.textContent = `You already know the weather for ${
+        filteredArray[0].querySelector(".city-name span").textContent
+      } ...otherwise be more specific by providing the country code as well 😉`;
+      form.reset();
+      input.focus();
+      return;
+    }
+  }
+
+  //ajax inicio
   const url = `https://api.openweathermap.org/data/2.5/weather?q=${inputVal}&appid=${apiKey}&units=metric`;
 
   fetch(url)
@@ -30,7 +64,9 @@ form.addEventListener("submit", e => {
         </h2>
         <div class="city-temp">${Math.round(main.temp)}<sup>°C</sup></div>
         <figure>
-          <img class="city-icon" src=${icon} alt=${weather[0]["main"]}>
+          <img class="city-icon" src="${icon}" alt="${
+        weather[0]["description"]
+      }">
           <figcaption>${weather[0]["description"]}</figcaption>
         </figure>
       `;
@@ -38,10 +74,11 @@ form.addEventListener("submit", e => {
       list.appendChild(li);
     })
     .catch(() => {
-      msg.textContent = "Insira uma cidade valida";
+      msg.textContent = "Please search for a valid city 😩";
     });
 
   msg.textContent = "";
   form.reset();
   input.focus();
 });
+
