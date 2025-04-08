@@ -3,7 +3,7 @@ const input = document.querySelector(".top-banner input");
 const msg = document.querySelector(".top-banner .msg");
 const list = document.querySelector(".ajax-section .cities");
 // chave api do clima
-const apiKey = "fbf43cfebb91260fbb8201a8bb770fef";
+const apiKey = "SUA_CHAVE_API";
 
 form.addEventListener("submit", e => {
   e.preventDefault();
